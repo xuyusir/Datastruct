@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #define LIST_INIT_SIZE 1000
 #define LISTINCREMENT 100
+#define STACK_INIT_SIZE 1000
+#define STACKINCREMENT 100
 typedef struct {
 	char *elem;
 	int length;
@@ -40,3 +42,99 @@ bool ListDelete(List &L, int i, char &e) {
 	--L.length;
 	return true;
 }
+
+void MergeList(List La, List Lb, List &Lc) {
+	char* pa;
+	char* pb;
+	char* pc;
+	char* pa_last;
+	char* pb_last;
+	pa = La.elem;
+	pb = Lb.elem;
+	Lc.listsize = Lc.length = La.length + Lb.length;
+	pc = Lc.elem = (char *)malloc(Lc.listsize * sizeof(char));
+	pa_last = La.elem + La.length - 1;
+	pb_last = Lb.elem + Lb.length - 1;
+	while (pa<=pa_last&&pb<=pb_last)   //¹é²¢
+	{
+		if (*pa <= *pb) *pc++ = *pa++;
+		else *pc++ = *pb++;
+	}
+	while (pa<=pa_last) *pc++ = *pa++;
+	while (pb <= pb_last) *pc++ = *pb++;
+}
+
+
+typedef struct node {
+	char data;
+	struct node *next;
+}node,*linklist;
+
+bool getnodeelem(linklist l, int i, char &e) {
+	linklist p;
+	int j;
+	p = l->next;
+	while (p&&j < i) {
+		p = p->next; ++j;
+	}
+	e = p->data;
+	return true;
+}
+
+bool nodelistinsert(linklist l, int i, char e) {
+	linklist p=l,s;
+	int j = 0;
+	while (p&&j<=i-1)
+	{
+		p = p->next; ++j;
+	}
+	s = (linklist)malloc(sizeof(node));
+	s->data = e; s->next = p->next;
+	p->next = s;
+	return true;
+}
+
+bool nodelistdelete(linklist l, int i, char &e) {
+	linklist p=l,q;
+	int j = 0;
+	while (p->next&&j<i-1)
+	{
+		p = p->next; j++;
+	}
+	q = p->next; p->next = q->next;
+	e = q->data; free(q);
+	return true;
+}
+
+typedef struct {            //stack
+	char* base;
+	char* top;
+	int stacksize;
+}stack;
+
+bool initstack(stack &s) {
+	s.base = (char*)malloc(STACK_INIT_SIZE * sizeof(char));
+	s.top = s.base;
+	s.stacksize = STACK_INIT_SIZE;
+	return true;
+}
+
+bool push(stack &s, char e) {
+	if (s.top-s.base>=s.stacksize)
+	{
+		s.base = (char*)realloc(s.base, (s.stacksize + STACKINCREMENT) * sizeof(char));
+	}
+	s.top = s.base + s.stacksize;
+	s.stacksize += STACKINCREMENT;
+	*s.top++ = e;
+	return true;
+}
+
+bool pop(stack &s, char &e) {
+	if (s.top == s.base)return false;
+	e = *--s.top;
+	return true;
+}
+
+
+
