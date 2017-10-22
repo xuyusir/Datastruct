@@ -136,5 +136,38 @@ bool pop(stack &s, char &e) {
 	return true;
 }
 
+typedef struct {
+	char data;
+	qnodeptr next;
+}qnode,*qnodeptr;
 
+typedef struct {
+	qnodeptr front;
+	qnodeptr rear;
+}linkqueue;
+
+bool initqueue(linkqueue &q) {
+	q.front = q.rear = (qnodeptr)malloc(sizeof(qnode));
+	q.front->next = NULL;
+	return true;
+}
+
+bool enqueue(linkqueue &q, char e) {
+	qnodeptr p;
+	p = (qnodeptr)malloc(sizeof(qnode));
+	p->data = e; p->next = NULL;
+	q.rear->next = p;
+	q.rear = p;
+	return true;
+}
+
+bool dequeue(linkqueue &q, char &e) {
+	qnodeptr p;
+	p = q.front->next;
+	e = p->data;
+	q.front->next = p->next;
+	if (q.rear == p) q.rear = q.front;
+	free(p);
+	return true;
+}
 
